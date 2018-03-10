@@ -19,6 +19,7 @@ This repository uses curl to communicate with Vault, and CircleCI as the suggest
 - For local development, update and rename env.local.example as env.local
 
 ## Workflow
+```
 
        +-----------+     +-----------+
        |           |     |           |
@@ -34,7 +35,7 @@ This repository uses curl to communicate with Vault, and CircleCI as the suggest
              |   Resources  |
              |              |
              +--------------+
-
+```
 
 ## Provision
 - Follows Vault path hierarchy
