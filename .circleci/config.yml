@@ -15,8 +15,7 @@ jobs:
       # - image: circleci/postgres:9.4
 
     environment:
-      - VAULT_ADDR=https://my.vault.url
-      - VAULT_TOKEN=my_token
+
     working_directory: ~/repo
 
     steps:
@@ -24,10 +23,9 @@ jobs:
 
       # Remove this if you already have Vault installed
       # In that case just make sure VAULT_ADDR and VAULT_TOKEN receive correct value
-      - run:
-        name: Install demo Vault 
-        command: |
-          bash scripts/install_demo.sh
+      # - run:
+      #  name: Install demo Vault 
+      #  command:  bash scripts/install_demo.sh
       
       # Remove this if you already have an existing DB
       # name: Database setup
@@ -36,15 +34,12 @@ jobs:
 
       - run:
           name: Provision Vault
-          command: |
-            bash scripts/provision.sh
+          command: bash scripts/provision.sh
 
       # Run tests
       - run:
           name: Run tests
-          command: |
-            bash scripts/tests.sh
-            #TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+          command: bash scripts/tests.sh
 
       # collect reports
       # - store_test_results:
