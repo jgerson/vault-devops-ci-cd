@@ -23,6 +23,7 @@ if [ "$CIRCLECI" != "true" ]; then
 fi
 
 echo "Applying env variables to config files"
+echo pwd is `pwd`
 sed -e "s/DATABASE_CONNECTION_STRING/$DB_USERNAME:$DB_PASSWORD@$DB_URL/g" \
   templates/connection.json > ../data/database/config/postgres/connection.json
 
