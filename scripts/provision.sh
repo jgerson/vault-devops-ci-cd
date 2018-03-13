@@ -25,9 +25,9 @@ fi
 
 echo "Applying env variables to config files"
 sed -e "s/DATABASE_CONNECTION_STRING/$DB_USERNAME:$DB_PASSWORD@$DB_URL/g" \
-  templates/connection.json > ../data/database/config/postgres/connection.json
+  templates/connection.json > ../data/database/config/postgres-dev/connection.json
 
-echo database is `cat ../data/database/config/postgres/connection.json`
+echo database is `cat ../data/database/config/postgres-dev/connection.json`
 
 echo "Verifying Vault is unsealed"
 OUTPUT=$(curl \
