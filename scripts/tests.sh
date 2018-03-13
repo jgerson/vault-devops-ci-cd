@@ -10,6 +10,7 @@ if echo $OUTPUT | grep userpass > /dev/null; then
     echo SUCCESS - UserPass enabled
 else
     echo FAIL - Could not find UserPass enabled
+    exit 1
 fi
 
 echo -e '\n ... Auth: User "me" exists'
@@ -21,6 +22,7 @@ if echo $OUTPUT | grep policies > /dev/null; then
     echo SUCCESS - User \"me\" exists
 else
     echo FAIL - Could not find user \"me\"
+    exit 1
 fi
 
 echo -e '\n ... Postgres: Validate Postgresql mounted'
@@ -33,6 +35,7 @@ if echo $OUTPUT | grep postgres > /dev/null; then
     echo SUCCESS - postgresql mounted
 else
     echo FAIL - Could not find postgresql mounted
+    exit 1
 fi
 
 echo -e '\n ... Postgres: Can create user'
@@ -46,6 +49,7 @@ if echo $CREATE_OUTPUT | grep username > /dev/null; then
     echo SUCCESS - Able to dynamically create postgresql user
 else
     echo FAIL - Could not dynamically create postgresql user
+    exit 1
 fi
 
 echo -e '\n ... Postgres: Can revoke user'
@@ -67,6 +71,7 @@ if echo $LOOKUP_LEASE | grep "invalid lease" > /dev/null; then
     echo SUCCESS - Dynamic postgresql user revoked
 else
     echo FAIL - Could not revoke dynamic postgresql user
+    exit 1
 fi
 
 echo -e '\n ... Policy: Validate postgresql policy written'
@@ -79,4 +84,5 @@ if echo $OUTPUT | grep "postgresql-readonly" > /dev/null; then
     echo SUCCESS - Policy postgresql-readonly enabled
 else
     echo FAIL - Could not find policy postgresql-readonly
+    exit 1
 fi

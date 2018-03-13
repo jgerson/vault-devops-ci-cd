@@ -23,19 +23,21 @@ if [ "$CIRCLECI" != "true" ]; then
 fi
 
 echo "Applying env variables to config files"
-echo pwd is `pwd`
 sed -e "s/DATABASE_CONNECTION_STRING/$DB_USERNAME:$DB_PASSWORD@$DB_URL/g" \
   templates/connection.json > ../data/database/config/postgres/connection.json
+
+echo database is `cat ../data/database/config/postgres/connection.json`
 
 echo "Verifying Vault is unsealed"
 OUTPUT=$(curl \
     --silent \
     $VAULT_ADDR/v1/sys/seal-status)
 
-if echo $OUTPUT | grep "\"sealed\": false" > /dev/null; then
+if echo $OUTPUT | grep "\"sealed\":false" > /dev/null; then
     echo SUCCESS - Vault is unsealed
 else
     echo FAIL - Vault is sealed. Please unseal for provisioning and tests
+    exit 1
 fi
 
 pushd ../data >/dev/null
