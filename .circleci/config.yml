@@ -34,12 +34,14 @@ jobs:
 
       - run:
           name: Provision Vault
-          command: bash cd scripts; provision.sh
+          pwd: scripts  
+          command: bash provision.sh
 
       # Run tests
       - run:
           name: Run tests
-          command: bash scripts/tests.sh
+          pwd: scripts  
+          command: bash tests.sh
 
       # collect reports
       # - store_test_results:
