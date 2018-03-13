@@ -21,17 +21,6 @@ jobs:
     steps:
       - checkout
 
-      # Remove this if you already have Vault installed
-      # In that case just make sure VAULT_ADDR and VAULT_TOKEN receive correct value
-      # - run:
-      #  name: Install demo Vault 
-      #  command:  bash scripts/install_demo.sh
-      
-      # Remove this if you already have an existing DB
-      # name: Database setup
-      #    command: |
-      #    bash scripts/db_demo.sh
-
       - run:
           name: Provision Vault
           pwd: scripts  
@@ -42,10 +31,3 @@ jobs:
           name: Run tests
           pwd: scripts  
           command: bash tests.sh
-
-      # collect reports
-      # - store_test_results:
-          # path: /tmp/test-results
-      # - store_artifacts:
-          # path: /tmp/test-results
-          # destination: test-results
