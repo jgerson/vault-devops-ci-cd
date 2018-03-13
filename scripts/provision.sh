@@ -25,9 +25,9 @@ fi
 
 echo "Applying env variables to config files"
 sed -e "s/DATABASE_CONNECTION_STRING/$DB_USERNAME:$DB_PASSWORD@$DB_URL/g" \
-  templates/connection.json > ../data/database/config/postgres-dev/connection.json
+  templates/postgres-dev.json > ../data/database/config/postgres-dev.json
 
-echo database is `cat ../data/database/config/postgres-dev/connection.json`
+echo database is `cat ../data/database/config/postgres-dev.json`
 
 echo "Verifying Vault is unsealed"
 OUTPUT=$(curl \
@@ -45,7 +45,7 @@ pushd ../data >/dev/null
 provision sys/auth
 provision sys/mounts
 provision sys/policy
-provision database/config/postgres-dev
+provision database/config/
 provision database/roles
 provision auth/userpass/users
 provision secret/app1/dev
@@ -55,4 +55,4 @@ provision secret/app2/prod
 popd > /dev/null
 
 echo "Restoring config files"
-cat templates/connection.json > ../data/database/config/postgres/connection.json
+cat templates/postgres-dev.json > ../data/database/config/postgres-dev.json
