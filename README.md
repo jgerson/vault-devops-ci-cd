@@ -1,6 +1,6 @@
 # Vault Management CI/CD Workflow
 
-https://circleci.com/gh/stenio123/vault-devops-ci-cd.svg?style=shield&circle-token=75463fba3e49dbecc28702cb725369bff10ac039
+[![CircleCI](https://circleci.com/gh/stenio123/vault-devops-ci-cd.svg?style=shield&circle-token=75463fba3e49dbecc28702cb725369bff10ac039)]
 
 Vault is an open source secrets management solution, more information can be found here <Link to Vaultproject.io>
 
