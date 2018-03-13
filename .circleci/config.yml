@@ -34,7 +34,7 @@ jobs:
 
       - run:
           name: Provision Vault
-          command: bash scripts/provision.sh
+          command: bash cd scripts; provision.sh
 
       # Run tests
       - run:
