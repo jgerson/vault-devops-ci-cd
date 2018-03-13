@@ -28,7 +28,15 @@ sed -e "s/DATABASE_CONNECTION_STRING/$DB_USERNAME:$DB_PASSWORD@$DB_URL/g" \
   templates/connection.json > ../data/database/config/postgres/connection.json
 
 echo "Verifying Vault is unsealed"
-vault status > /dev/null
+OUTPUT=$(curl \
+    --silent \
+    $VAULT_ADDR/v1/sys/seal-status)
+
+if echo $OUTPUT | grep "\"sealed\": false" > /dev/null; then
+    echo SUCCESS - Vault is unsealed
+else
+    echo FAIL - Vault is sealed. Please unseal for provisioning and tests
+fi
 
 pushd ../data >/dev/null
 provision sys/auth
