@@ -45,7 +45,7 @@ pushd ../data >/dev/null
 provision sys/auth
 provision sys/mounts
 provision sys/policy
-provision database/config
+provision database/config/postgres-dev
 provision database/roles
 provision auth/userpass/users
 provision secret/app1/dev
