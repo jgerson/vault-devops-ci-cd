@@ -1,6 +1,6 @@
 # Vault Management CI/CD Workflow
 
-[![CircleCI](https://circleci.com/gh/stenio123/vault-devops-ci-cd.svg?style=shield&circle-token=75463fba3e49dbecc28702cb725369bff10ac039)]
+![CircleCI](https://circleci.com/gh/stenio123/vault-devops-ci-cd.svg?style=shield&circle-token=75463fba3e49dbecc28702cb725369bff10ac039)
 
 Vault is an open source secrets management solution, more information can be found here <Link to Vaultproject.io>
 
@@ -75,6 +75,7 @@ It is then team app1 responsibility to enter and track its secrets, and to coord
 - Trigger the run again, which should now succeed
 - Now every time you push to Github, the CICD will trigger executing provisioning followed by tests.
 - You can go to Gihub > Your project > Settings > Webhooks and customize the automated CICD trigger behaviour as needed
+- You can update the Circle CI badge on the README by going to Circle CI > Project > Notifications> Badges
 
 ## Local development and testing
 As you make changes to this codebase, you might want to test locally before pushing to github and trigering the CICD run. Assuming your machine has permission to connect to both the Vault server and the Postgres database:
