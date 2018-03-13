@@ -17,7 +17,8 @@ function provision() {
 }
 
 echo "If not on CircleCI, apply env vars (for testing locally)"
-if [ "$CIRCLECI" != "true" ]; then
+echo CircleCI is $CIRCLECI
+if [ -z "$CIRCLECI" ]; then
     echo "Applying local env vars"
     source env.local
 fi
