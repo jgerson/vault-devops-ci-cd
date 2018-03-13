@@ -25,16 +25,42 @@ else
     exit 1
 fi
 
-echo -e '\n ... Postgres: Validate Postgresql mounted'
+echo -e '\n ... Database: Validate Database mounted'
+OUTPUT=$(curl \
+    --silent \
+    --request GET \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/sys/mounts)
+if echo $OUTPUT | grep database > /dev/null; then
+    echo SUCCESS - database mounted
+else
+    echo FAIL - Could not find database mounted
+    exit 1
+fi
+
+echo -e '\n ... Database: Validate Dev-Postgres configured'
+OUTPUT=$(curl \
+    --silent \
+    --request GET \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/database/config/dev-postgres)
+if echo $OUTPUT | grep "\"plugin_name\":\"postgresql-database-plugin\"" > /dev/null; then
+    echo SUCCESS - database mounted
+else
+    echo FAIL - Could not find database mounted
+    exit 1
+fi
+
+echo -e '\n ... Database: Validate readonly role exists'
 OUTPUT=$(curl \
     --silent \
     --request LIST \
     --header "X-Vault-Token: $VAULT_TOKEN" \
-    $VAULT_ADDR/v1/database/config)
-if echo $OUTPUT | grep postgres > /dev/null; then
-    echo SUCCESS - postgresql mounted
+    $VAULT_ADDR/v1/database/roles)
+if echo $OUTPUT | grep readonly > /dev/null; then
+    echo SUCCESS - \"readonly\" role exists
 else
-    echo FAIL - Could not find postgresql mounted
+    echo FAIL - Could not find role \"readonly\"
     exit 1
 fi
 

@@ -9,7 +9,7 @@ function provision() {
   for f in $(ls "$1"/*.json); do
     p="$1/${f%.json}"
     echo "Provisioning $p"
-    # echo running curl --location --fail --header "X-Vault-Token: ${VAULT_TOKEN}" --data @"${f}" "${VAULT_ADDR}/v1/${p}"
+    echo running curl --location --fail --header "X-Vault-Token: ${VAULT_TOKEN}" --data @"${f}" "${VAULT_ADDR}/v1/${p}"
     curl  --location --fail --header "X-Vault-Token: ${VAULT_TOKEN}" --data @"${f}" "${VAULT_ADDR}/v1/${p}"
   done
   popd > /dev/null
