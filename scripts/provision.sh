@@ -21,7 +21,6 @@ function new_value() {
   pushd "$1" > /dev/null
   for f in $(ls "$1"/*.json); do
     p="$1/${f%.json}"
-    path=$(dirname "${f}")
     key=$(basename "${f%.json}")
     
     if get_value_list $1 | grep $key > /dev/null; then
@@ -35,6 +34,8 @@ function new_value() {
   set -e
 }
 
+# TODO make prettier bash
+# This was needed because couldn't assign the output of a command to a var when inside a function
 function get_value_list() {
     curl --silent --request LIST --header "X-Vault-Token: ${VAULT_TOKEN}" ${VAULT_ADDR}/v1/$1
 }
