@@ -76,6 +76,7 @@ It is then team app1 responsibility to enter and track its secrets, and to coord
     - DB_USERNAME (Username in Postgres database with permissions to run SQL query specified in database/roles)
     - DB_PASSWORD (Password for that username)
     - DB_URL (URL for database, that will be interpolated in the connection string. Example: mydb.olt6t13fa.us-east-2.rds.amazonaws.com)
+    ![image](images/CircleCiEnvVars.png)
 - Trigger the run again, which should now succeed
 - Now every time you push to Github, the CICD will trigger executing provisioning followed by tests.
 - You can go to Gihub > Your project > Settings > Webhooks and customize the automated CICD trigger behaviour as needed
@@ -98,9 +99,9 @@ The files under data/auth/github and data/auth/ldap are meant as reference only,
 - In order for an user to login using Github auth method:
     - The user should generate a personal token in Github:
         - Go to Github > Your profile > Settings > Developer settings > Personal access tokens > Generate
-        ![alt text][GithubAccessToken_1 "GithubAccessToken_1"]
+        ![image](images/GithubAccessToken_1.png)
         - When selecting the scope for this token, it should have at least "read:org, read:user" privileges
-        ![alt text][GithubAccessToken_2 "GithubAccessToken_2"]
+        ![image](images/GithubAccessToken_2.png)
     - The user should write this token in a file @token.json, for example
     ```
     {
