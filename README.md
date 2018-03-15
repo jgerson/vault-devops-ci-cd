@@ -14,6 +14,8 @@ This repository uses curl to communicate with Vault, and CircleCI as the suggest
 - There are firewall rules in place to allow Circle CI or your preferred CI/CD solution to communicate with Vault and Postgres
 - This reference is meant as an example. In a production setting you should restrict access to Vault and to your DB by running the CI/CD from your hosted infrastructure.
 
+---
+
 ## Workflow
 ```
 
@@ -59,6 +61,8 @@ Secrets will be the responsibility of each individual team. For example, if team
 
 It is then team app1 responsibility to enter and track its secrets, and to coordinate with the Security team on how to credentials to use Vault services. This code uses userpass auth method as an example, with the caveat discussed in the Idepotency section. In real world scenarios most likely the authentication will be done through approle or another type of trusted entity method.
 
+---
+
 ## Configure Circle CI
 - Clone this code and push to your own repository in Github
 - Go to https://circleci.com/ and login or create a new account
@@ -82,16 +86,49 @@ As you make changes to this codebase, you might want to test locally before push
 - Update environment variables on env.local.example 
 - rename env.local.example to env.local
 
-## Idempotency
-The provision.sh and tests.sh scripts are idempontent, meaning that they can be executed multiple times safely.
-Having said that, please note that certain commands will overwrite values that might have been updated manually on Vault. This is the intended behavior, because it will guarantee that Vault configuration related to the code existing in this repository will remain consistent.
+---
 
-### User passwords
-This code gives an example of automating the auth/userpass method. However because of the above, we didn't specify users to be created automatically, since any updated passwords would be overwritten by stubs when the CICD executes multiple times. Handling such sensitive strings is outside the scope of this project.
+## Authentication Methods
+The files under data/auth/github and data/auth/ldap are meant as reference only, and should be updated to your organization's needs.
 
-### Secrets
-Similarly to the above, care should be taken when specifying secrets. This is a more trivial case to address, since a record in the Vault secret backend can have multiple keys. Once CICD is executed, only the key "PLACEHOLDER_OVERWRITE" will be updated, while any other values in that record will remain untouched.
+### Github
+- Update your organization name on data/auth/github/config.json
+- If you want to specify Vault policies per Github team in your organization, update data/auth/github/map/teams and associated policy accordingly
+- If you want to specify Vault policies per Github user in your organization, update data/auth/github/map/users and associated policy accordingly. Note that these Vault policies will be applied *in addition* to Vault policies applied to a Github team this user is a member of
+- In order for an user to login using Github auth method:
+    - The user should generate a personal token in Github:
+        - Go to Github > Your profile > Settings > Developer settings > Personal access tokens > Generate
+        ![alt text][GithubAccessToken_1 "GithubAccessToken_1"]
+        - When selecting the scope for this token, it should have at least "read:org, read:user" privileges
+        ![alt text][GithubAccessToken_2 "GithubAccessToken_2"]
+    - The user should write this token in a file @token.json, for example
+    ```
+    {
+    "token": "4db...05"
+    }
+    ```
+    - The user then executes the command
+    ```
+        curl  --request POST --data @token.json $VAULT_ADDR/v1/auth/github/login
+    ```
+- Additional information in the ["Github auth method documentation"][github-docs]
+
+### LDAP
+- Update data/auth/ldap/config.json with your organization's LDAP server information
+- Update data/auth/ldap//groups to associate Vault policies with specific groups in your LDAP server
+- Additional information in the ["LDAP auth method documentation"][ldap-docs]
+
+---
+
+## A Note on Idempotency
+Whenever a value is written in Vault, it overwrites the pre-existing value. For this reference implementation we want to allow idempotent operation of the scripts (they can be executed multiple times having same result), so they can be executed as part of the CICD, while at the same time allowing the proposed workflow of having the security team define placeholder stubs and handing the responsibility to manage secrets to each application team.  
+
+This balance is achieved in provision.sh, which has the function "new_value" that should be called for values that shouldn't be overwritten during CICD execution. Examples include username users, which their associated passwords, and any secrets.
+
+If you want to test it out, run provision.sh, then update a secret manually and run provision.sh again. You will see that the secret value hasn't changed.
 
 
 [post]: https://www.hashicorp.com/blog/codifying-vault-policies-and-configuration.html
 [vaultproject]: https://www.vaultproject.io
+[github-docs]: https://www.vaultproject.io/docs/auth/github.html
+[ldap-docs]: https://www.vaultproject.io/docs/auth/ldap.html

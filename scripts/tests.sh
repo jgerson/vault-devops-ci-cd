@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+################################
+##  Auth methods:
+##  Userpass
+##
+################################
+
 echo -e '\n ... Auth: Validate UserPass enabled'
 OUTPUT=$(curl \
     --silent \
@@ -10,10 +16,10 @@ if echo $OUTPUT | grep userpass > /dev/null; then
     echo SUCCESS - UserPass enabled
 else
     echo FAIL - Could not find UserPass enabled
-    exit 1
+    #exit 1
 fi
 
-echo -e '\n ... Auth: User "me" exists'
+echo -e '\n ... Auth: Validate User "me" exists'
 OUTPUT=$(curl \
     --silent \
     --header "X-Vault-Token: $VAULT_TOKEN" \
@@ -24,6 +30,98 @@ else
     echo FAIL - Could not find user \"me\"
     exit 1
 fi
+
+################################
+##  Auth methods:
+##  Github
+##
+################################
+
+echo -e '\n ... Auth: Validate Github auth method enabled'
+OUTPUT=$(curl \
+    --silent \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/sys/auth)
+if echo $OUTPUT | grep github > /dev/null; then
+    echo SUCCESS - Github enabled
+else
+    echo FAIL - Could not find Github enabled
+    exit 1
+fi
+
+echo -e '\n ... Auth: Validate Github user "stenio123" registered'
+OUTPUT=$(curl \
+    --silent \
+    --request LIST \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/auth/github/map/users)
+if echo $OUTPUT | grep stenio123 > /dev/null; then
+    echo SUCCESS - Github user \"stenio123\" registered
+else
+    echo FAIL - Could not find record for Github user \"stenio123\"
+    exit 1
+fi
+
+echo -e '\n ... Auth: Validate Github team "dev" registered'
+OUTPUT=$(curl \
+    --silent \
+    --request LIST \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/auth/github/map/teams)
+if echo $OUTPUT | grep dev > /dev/null; then
+    echo SUCCESS - Github team \"dev\" registered
+else
+    echo FAIL - Could not find record for Github team \"dev\"
+    exit 1
+fi
+################################
+##  Auth methods:
+##  LDAP
+##
+################################
+echo -e '\n ... Auth: Validate LDAP auth method enabled'
+OUTPUT=$(curl \
+    --silent \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/sys/auth)
+if echo $OUTPUT | grep ldap > /dev/null; then
+    echo SUCCESS - LDAP enabled
+else
+    echo FAIL - Could not find LDAP enabled
+    exit 1
+fi
+
+echo -e '\n ... Auth: LDAP group "dev" registered'
+OUTPUT=$(curl \
+    --silent \
+    --request LIST \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/auth/ldap/groups)
+if echo $OUTPUT | grep dev > /dev/null; then
+    echo SUCCESS - LDAP group \"dev\" registered
+else
+    echo FAIL - Could not find record for LDAP group \"dev\"
+    exit 1
+fi
+
+echo -e '\n ... Auth: LDAP group "dev" associated with "app1-readonly-dev" policy'
+OUTPUT=$(curl \
+    --silent \
+    --request GET \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/auth/ldap/groups/dev)
+if echo $OUTPUT | grep app1-readonly-dev > /dev/null; then
+    echo SUCCESS - LDAP group \"dev\" associated with \"app1-readonly-dev\" policy
+else
+    echo FAIL - LDAP group \"dev\" not associated with \"app1-readonly-dev\" policy
+    exit 1
+fi
+
+################################
+##  Dynamic Secrets:
+##  Database (postgres)
+##
+################################
 
 echo -e '\n ... Database: Validate Database mounted'
 OUTPUT=$(curl \
@@ -112,3 +210,28 @@ else
     echo FAIL - Could not find policy postgresql-readonly
     exit 1
 fi
+
+################################
+##  Policies:
+##  
+##
+################################
+
+echo -e '\n ... Policies are registered'
+OUTPUT=$(curl \
+    --silent \
+    --request LIST \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    $VAULT_ADDR/v1/sys/policies/acl)
+for f in $(ls ../data/sys/policy/*.json); do
+    # Removes file extension
+    p=${f%.json}
+    # Removes path
+    p=${p##*/}
+    if echo $OUTPUT | grep "$p" > /dev/null; then
+        echo SUCCESS - Policy "$p" registered
+    else
+        echo FAIL - Could not find policy "$p"
+        exit 1
+    fi
+done
