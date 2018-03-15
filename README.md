@@ -59,7 +59,7 @@ Secrets will be the responsibility of each individual team. For example, if team
 - Secret stubs for the above paths
 - An authentication method associated with the created policies
 
-It is then team app1 responsibility to enter and track its secrets, and to coordinate with the Security team on how to credentials to use Vault services. This code uses userpass auth method as an example, with the caveat discussed in the Idepotency section. In real world scenarios most likely the authentication will be done through approle or another type of trusted entity method.
+It is then team app1 responsibility to enter and track its secrets, and to coordinate with the Security team on how to credentials to use Vault services. This code has examples using userpass, github and LDAP auth methods
 
 ---
 
