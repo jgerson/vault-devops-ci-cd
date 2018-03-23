@@ -12,6 +12,9 @@ This repository uses curl to communicate with Vault, and CircleCI as the suggest
 - You have a Vault server running and unsealed
 - You have a Postgres database running
 - There are firewall rules in place to allow Circle CI or your preferred CI/CD solution to communicate with Vault and Postgres
+- You have set the environment variables in Circle CI or in "scripts/env.local"
+
+## Note
 - This reference is meant as an example. In a production setting you should restrict access to Vault and to your DB by running the CI/CD from your hosted infrastructure.
 
 ---
