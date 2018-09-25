@@ -1,0 +1,1 @@
+{"policy":"path \"secret/finance_app/dev/*\" {\n  capabilities = [\"read\"]\n}"}
