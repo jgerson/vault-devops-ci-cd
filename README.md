@@ -8,9 +8,15 @@ This repository is inspired by the blog post ["Codifying Vault Policies and Conf
 
 This repository uses curl to communicate with Vault, and CircleCI as the suggested CI/CD tool, however it can easily be adapted to one of the other supported API Libraries <link here> or other CI/CD providers.
 
+## TODO
+- Refactor code so independent teams have independent workflow to push changes to their Namespaces. Perhaps rely on git modules.
+- Support nested Namespaces (currently only supports one level)
+- Refactor provision.sh so that Vault endpoints are identified dynamically instead of relying on a static list
+- Refactor how database configs are implemented per Namespace. Currently requires file in script/templates and stub in namespace/data/database/config/filename.json
+- Review tests.sh to make tests more relevant
+
 ## Assumptions
 - You have a Vault server running and unsealed
-- You have a Postgres database running
 - There are firewall rules in place to allow Circle CI or your preferred CI/CD solution to communicate with Vault and Postgres
 - You have set the environment variables in Circle CI or in "scripts/env.local"
 
@@ -76,19 +82,19 @@ It is then team app1 responsibility to enter and track its secrets, and to coord
 - In the project settings, go to "environment variables", and set the values to the following:
     - VAULT_ADDR (Address to the vault server, in the format http://address:port or https://address:port)
     - VAULT_TOKEN (Vault token with permissions to execute provision and test commands)
-    - DB_USERNAME (Username in Postgres database with permissions to run SQL query specified in database/roles)
-    - DB_PASSWORD (Password for that username)
-    - DB_URL (URL for database, that will be interpolated in the connection string. Example: mydb.olt6t13fa.us-east-2.rds.amazonaws.com)
+    - <NAMESPACE>_<DB_NAME>_DB_USERNAME (Username in Postgres database with permissions to run SQL query specified in database/roles)
+    - <NAMESPACE>_<DB_NAME>_DB_PASSWORD (Password for that username)
+    - <NAMESPACE>_<DB_NAME>_DB_URL (URL for database, that will be interpolated in the connection string. Example: mydb.olt6t13fa.us-east-2.rds.amazonaws.com)
     ![image](images/CircleCiEnvVars.png)
 - Trigger the run again, which should now succeed
 - Now every time you push to Github, the CICD will trigger executing provisioning followed by tests.
-- You can go to Gihub > Your project > Settings > Webhooks and customize the automated CICD trigger behaviour as needed
+- You can go to Gihub > Your project > Settings > Webhooks and customize the automated CICD trigger behavior as needed
 - You can update the Circle CI badge on the README by going to Circle CI > Project > Notifications> Badges
 
 ## Local development and testing
 As you make changes to this codebase, you might want to test locally before pushing to github and trigering the CICD run. Assuming your machine has permission to connect to both the Vault server and the Postgres database:
 - Update environment variables on env.local.example 
-- rename env.local.example to env.local
+- rename env.local.example to .env.local
 
 ---
 

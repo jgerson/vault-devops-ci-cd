@@ -141,11 +141,11 @@ OUTPUT=$(curl \
     --silent \
     --request GET \
     --header "X-Vault-Token: $VAULT_TOKEN" \
-    $VAULT_ADDR/v1/database/config/dev-postgres)
+    $VAULT_ADDR/v1/database/config/postgres_dev)
 if echo $OUTPUT | grep "\"plugin_name\":\"postgresql-database-plugin\"" > /dev/null; then
-    echo SUCCESS - database mounted
+    echo SUCCESS - database configured
 else
-    echo FAIL - Could not find database mounted
+    echo FAIL - Could not find database configured
     exit 1
 fi
 
@@ -164,39 +164,39 @@ fi
 
 echo -e '\n ... Postgres: Can create user'
 # Creates user and stores information in $CREATE_OUTPUT
-CREATE_OUTPUT=$(curl \
-    --silent \
-    --header "X-Vault-Token: $VAULT_TOKEN" \
-    $VAULT_ADDR/v1/database/creds/readonly)
-echo create output is $CREATE_OUTPUT
-if echo $CREATE_OUTPUT | grep username > /dev/null; then
-    echo SUCCESS - Able to dynamically create postgresql user
-else
-    echo FAIL - Could not dynamically create postgresql user
-    exit 1
-fi
+# CREATE_OUTPUT=$(curl \
+#     --silent \
+#     --header "X-Vault-Token: $VAULT_TOKEN" \
+#     $VAULT_ADDR/v1/database/creds/readonly)
+# echo create output is $CREATE_OUTPUT
+# if echo $CREATE_OUTPUT | grep username > /dev/null; then
+#     echo SUCCESS - Able to dynamically create postgresql user
+# else
+#     echo FAIL - Could not dynamically create postgresql user
+#     exit 1
+# fi
 
 echo -e '\n ... Postgres: Can revoke user'
 # Retrieves lease_id from $CREATE_OUTPUT
-LEASE_ID=$(echo $CREATE_OUTPUT| jq -r '.lease_id')
-REVOKE_OUTPUT=$(curl  \
-    --silent \
-    --header "X-Vault-Token: $VAULT_TOKEN"  \
-    --request PUT  \
-    --data "{\"lease_id\": \"$LEASE_ID\"}" \
-    $VAULT_ADDR/v1/sys/leases/revoke)
-LOOKUP_LEASE=$(curl \
-    --silent \
-    --header "X-Vault-Token: $VAULT_TOKEN" \
-    --request PUT \
-    --data "{\"lease_id\": \"$LEASE_ID\"}" \
-    $VAULT_ADDR/v1/sys/leases/lookup)
-if echo $LOOKUP_LEASE | grep "invalid lease" > /dev/null; then
-    echo SUCCESS - Dynamic postgresql user revoked
-else
-    echo FAIL - Could not revoke dynamic postgresql user
-    exit 1
-fi
+# LEASE_ID=$(echo $CREATE_OUTPUT| jq -r '.lease_id')
+# REVOKE_OUTPUT=$(curl  \
+#     --silent \
+#     --header "X-Vault-Token: $VAULT_TOKEN"  \
+#     --request PUT  \
+#     --data "{\"lease_id\": \"$LEASE_ID\"}" \
+#     $VAULT_ADDR/v1/sys/leases/revoke)
+# LOOKUP_LEASE=$(curl \
+#     --silent \
+#     --header "X-Vault-Token: $VAULT_TOKEN" \
+#     --request PUT \
+#     --data "{\"lease_id\": \"$LEASE_ID\"}" \
+#     $VAULT_ADDR/v1/sys/leases/lookup)
+# if echo $LOOKUP_LEASE | grep "invalid lease" > /dev/null; then
+#     echo SUCCESS - Dynamic postgresql user revoked
+# else
+#     echo FAIL - Could not revoke dynamic postgresql user
+#     exit 1
+# fi
 
 echo -e '\n ... Policy: Validate postgresql policy written'
 OUTPUT=$(curl \
@@ -223,7 +223,7 @@ OUTPUT=$(curl \
     --request LIST \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     $VAULT_ADDR/v1/sys/policies/acl)
-for f in $(ls ../data/sys/policy/*.json); do
+for f in $(ls ../namespaces/root/data/sys/policy/*.json); do
     # Removes file extension
     p=${f%.json}
     # Removes path

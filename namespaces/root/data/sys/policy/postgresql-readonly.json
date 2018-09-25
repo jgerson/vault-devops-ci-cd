@@ -1,0 +1,1 @@
+{"policy":"path \"database/creds/readonly\" {\n  capabilities = [\"read\"]\n}"}
